@@ -4,8 +4,14 @@ Given /the following movies exist/ do |movies_table|
   movies_table.hashes.each do |movie|
     # each returned element will be a hash whose key is the table header.
     # you should arrange to add that movie to the database here.
+    new_movie = Movie.new()
+    new_movie.title = movie[:title]
+    new_movie.rating = movie[:rating]
+    new_movie.release_date = movie[:release_date]
+
+    new_movie.save!
   end
-  flunk "Unimplemented"
+
 end
 
 # Make sure that one string (regexp) occurs before or after another one
@@ -14,7 +20,29 @@ end
 Then /I should see "(.*)" before "(.*)"/ do |e1, e2|
   #  ensure that that e1 occurs before e2.
   #  page.body is the entire content of the page as a string.
-  flunk "Unimplemented"
+
+  page_movies = page.all('table#movies tbody tr')
+
+  movie_titles = page_movies.map do |tr|
+
+  end
+
+end
+
+Then /I should see (all)?(none)? of the movies/ do |see_all, see_none|
+  row_count = 0
+  movies = Movie.all.map(&:title)
+  page_movies = page.all('table#movies tbody tr')
+
+  if(see_all)
+    page_movies.count.should == movies.length
+    #assert_equal page_movies.count, movies.length
+    movies.each do |movie|
+      step %{I should see "#{movie}"}
+    end
+  elsif (see_none)
+    #assert_equal page_movies.count, 0
+  end
 end
 
 # Make it easier to express checking or unchecking several boxes at once
@@ -25,4 +53,11 @@ When /I (un)?check the following ratings: (.*)/ do |uncheck, rating_list|
   # HINT: use String#split to split up the rating_list, then
   #   iterate over the ratings and reuse the "When I check..." or
   #   "When I uncheck..." steps in lines 89-95 of web_steps.rb
+  ratings = rating_list.split(",")
+
+  ratings.each do |rating|
+    step %{I #{uncheck ? 'uncheck' : 'check'} "ratings_#{rating.strip}"}
+  end
 end
+
+
