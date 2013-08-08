@@ -48,7 +48,7 @@ Scenario: no ratings selected
   When I uncheck the following ratings: G, PG, PG-13, R, NC-17
   And I press "ratings_submit"
   Then I should be on the home page
-  And I should see none of the movies
+  And I should see all of the movies
 
 Scenario: all ratings selected
   # see assignment
